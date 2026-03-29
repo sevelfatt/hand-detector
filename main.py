@@ -13,8 +13,6 @@ model.eval()
 
 transform = transforms.Compose([
     transforms.Resize((320,320)),
-    # transforms.RandomHorizontalFlip(),
-    # transforms.RandomRotation(15),
     transforms.ToTensor(),
     transforms.Normalize((0.5,0.5,0.5),(0.5,0.5,0.5)),
 ])
@@ -28,12 +26,10 @@ while True:
     if not ret:
         print("failed to grab frame")
         break
-    cv2.imshow("test", frame)
 
-    img_name = f"test.png"
-    cv2.imwrite(img_name, frame)
+    img_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-    img = Image.open("test.png")
+    img = Image.fromarray(img_rgb)
     img = transform(img).unsqueeze(0).to('cuda')
 
     model.eval()
@@ -42,6 +38,18 @@ while True:
         output = model(img)
         pred = torch.argmax(output, dim=1)
 
+    cv2.putText(
+        frame,
+        f"Your hand is: {classes[pred.item()]}",
+        (10, 40),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        1,
+        (0, 255, 0),
+        2
+    )
+
+    cv2.imshow("test", frame)
+    
     if predicted != classes[pred.item()]:
         predicted = classes[pred.item()]
         print("your hand is", predicted)
@@ -49,6 +57,5 @@ while True:
     
     k = cv2.waitKey(1)
     if k%256 == 27:
-        # ESC pressed
         print("Escape hit, closing...")
         break
