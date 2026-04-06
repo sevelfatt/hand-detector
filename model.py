@@ -62,7 +62,7 @@ class Model(nn.Module):
             nn.Linear(32, 16),
             nn.ReLU(),
 
-            nn.Linear(16, 5)
+            nn.Linear(16, 2)
         )
 
     def forward(self, x):
@@ -85,8 +85,8 @@ transform = transforms.Compose([
 train_dataset = datasets.ImageFolder(root='data/train', transform=transform)
 test_dataset = datasets.ImageFolder(root='data/test', transform=transform)
 
-train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=128, shuffle=False)
+train_loader = DataLoader(train_dataset, batch_size=106, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=24, shuffle=False)
 
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.AdamW(model.parameters(), lr=0.0001)
